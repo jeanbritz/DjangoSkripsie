@@ -13,9 +13,9 @@
 <body class="body">
 	<div class="loginBox">
 		{% if user.is_authenticated %}
-		<p>Welcome, {{ user.first_name }} {{user.last_name}} | <a href="accounts/logout/">log out</a></p>
+		<p>Welcome, {{ user.first_name }} {{user.last_name}} | <a href="account/logout">log out</a></p>
 		{% else %}
-		<p>Welcome, Guest. Please <a href="accounts/login/">log in</a> or <a href="accounts/register/">register</a></p>
+		<p>Welcome, Guest. Please <a href="account/login">log in</a> or <a href="account/signup">register</a></p>
 		{% endif %}
 		</div>
 	<header class="mainHead">

@@ -1,3 +1,5 @@
+import os
+
 # Django settings for skripsie project.
 
 DEBUG = True
@@ -41,7 +43,16 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
+FIXTURE_DIRS = (
+   os.path.join(os.path.dirname(__file__), 'account/fixtures'),
+)
+
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(os.path.dirname(__file__), "static"),
+    '/var/www/static/',
+)
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -95,6 +106,8 @@ TEMPLATE_DIRS = (
 
 AUTH_PROFILE_MODULE = 'paySystem.UserProfile'
 
+#APPEND_SLASH = False
+
 INSTALLED_APPS = (
 	'django.contrib.admin',
 	'django.contrib.staticfiles',
@@ -104,9 +117,15 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
 	'django.contrib.messages',
     #'django.contrib.sites',
+	'oauth2.base',
+    'oauth2.client',
+    'oauth2.account',
+    'oauth2.oauth2',
+    'oauth2.api',
 	'paySystem',
 	'registration',
 	'rest_framework',
+	'crispy_forms',
 )
 
 REST_FRAMEWORK = {
@@ -126,5 +145,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+
+CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 ACCOUNT_ACTIVATION_DAYS = 7
