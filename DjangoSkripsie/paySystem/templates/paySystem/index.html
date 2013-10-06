@@ -1,52 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "paySystem/base.html" %}
 
-<head>
-	<title> PaySystem </title>
-	<meta charset="utf-8">
-	{% load staticfiles %}
-	<link rel="stylesheet" type="text/css" href="{% static 'paySystem/style.css' %}" />
-	<meta name="viewport content = "width-device-width, initial-scale=1.0">
-</head>
+{% block title %}Home - NFCPaySystem{% endblock %}
+
+{% block home %}active{% endblock %}
+
+{% block nav %}
+	{% if user.is_consumer %}
+			<ul>
+				<li><a href="{{ user.username }}/invoices">Invoices</a></li>
+			{% if user.is_superuser %}
+				<li style="float:right"><a href="/admin">Admin</a></li>
+			{% endif %}
+			{% if user.is_active %}
+				<li style="float:right"><a href="{{ user.username }}">Profile</a></li>
+			{% endif %}
+			
+			</ul>
+	{% endif %}
+{% endblock %}
+
+{% block content_title %}
+Welcome
+{% endblock %}
+
+{% block content %}
+{% endblock %}
 
 
-<body class="body">
-	<div class="loginBox">
-		{% if user.is_authenticated %}
-		<p>Welcome, {{ user.first_name }} {{user.last_name}} | <a href="account/logout">log out</a></p>
-		{% else %}
-		<p>Welcome, Guest. Please <a href="account/login">log in</a> or <a href="account/signup">register</a></p>
-		{% endif %}
-		</div>
-	<header class="mainHead">
-		<!-- <img src="{% static 'paySystem/images/header.jpg' %}"/> -->
-		<nav><ul>
-		<li class = "active"><a href="#">Home</a></li>
-		<li><a href="#">Features</a></li>
-		<li><a href="#">Coverage</a></li>
-		<li style="float:right" ><a href="#">Contact Us</a></li>
-		</ul>
-		</nav>
-	</header>
-	{% if list_of_consumers %}
-    <table>
-	
-    {% for c in list_of_consumers %}
-		<tr>
-		<td>Consumer ID</td><td>{{ c.id }}</td>
-		</tr>
-		<tr>
-		<td>Contact No</td><td>{{ c.user_contactnumber }}</td>
-		</tr>
-		<tr>
-		<td>Acct Number</td><td>{{ c.user_acctbalance }}</td>
-		</tr>
-		<br>
-    {% endfor %}
-    
-	</table>
-{% else %}
-    <p>No consumers found.</p>
-{% endif %}
-
-</body>

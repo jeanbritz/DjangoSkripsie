@@ -84,9 +84,10 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-
+	'django.core.context_processors.request',
 	'django.contrib.messages.context_processors.messages',
-	'django.contrib.auth.context_processors.auth'
+	'django.contrib.auth.context_processors.auth',
+	
 )
 
 MIDDLEWARE_CLASSES = (
@@ -94,19 +95,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
 ROOT_URLCONF = 'skripsie.urls'
 
-TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-AUTH_PROFILE_MODULE = 'paySystem.UserProfile'
-
-#APPEND_SLASH = False
+#AUTH_PROFILE_MODULE = 'paySystem.UserProfile'
+AUTH_USER_MODEL = 'paySystem.User'
 
 INSTALLED_APPS = (
 	'django.contrib.admin',
@@ -116,17 +111,40 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
 	'django.contrib.messages',
-    #'django.contrib.sites',
-	'oauth2.base',
-    'oauth2.client',
-    'oauth2.account',
-    'oauth2.oauth2',
-    'oauth2.api',
+	'django.contrib.sites',
+    'registration',
 	'paySystem',
-	'registration',
 	'rest_framework',
 	'crispy_forms',
+	'django_openid_auth',
+	'debug_toolbar',
+	'inspector_panel',
+	'south',
 )
+
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+	'inspector_panel.panels.inspector.InspectorPanel',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'auth.GoogleBackend',
+	
+)
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
 
 REST_FRAMEWORK = {
 
@@ -149,3 +167,41 @@ REST_FRAMEWORK = {
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'null': {
+            'level':'DEBUG',
+            'class':'django.utils.log.NullHandler',
+        },
+        'console':{
+            'level':'DEBUG',
+            'class':'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['null'],
+            'propagate': True,
+            'level':'INFO',
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    }
+}

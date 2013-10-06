@@ -1,40 +1,95 @@
+import re
 from django.db import models
-from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
+from django.core import validators
+from django.core.mail import send_mail
+from django.core.urlresolvers import reverse
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
+#from taggit.managers import TaggableManager
 
 
 MINIMUM_FUNDS_REQUIRED = 50
 
-#CLAIM_TYPE_CHOICES = [(TICKET, 'Ticket'),(DISCOUNT, 'Discount')]
-'''
-class Consumer(models.Model):
-	
-	user_id = models.OneToOneField(User, unique=True, blank=False)
-	contactnumber = models.CharField(max_length=12, blank=True)
-	acctbalance = models.IntegerField(default=0)
-		class Meta:
-		proxy = True
-		app_label = 'auth'
-		verbose_name = 'Consumer account'
-		verbose_name_plural = 'Consumer accounts'
-	
-	def __unicode__(self):
-		return unicode(self.user)
-	
-	def has_efficient_funds(self):
-		if(user_acctbalance > 0):
-			return True
-		else:
-			return False
+GENDER_CHOICES = (('M', 'Male'), ('F', 'Female'))
 
-	def user_post_save(sender, instance, created, **kwargs):
-		"""Create a user profile when a new user account is created"""
-		if created == True:
-			user = Consumer()
-			user.save()
-			user.account = instance
-		post_save.connect(user_post_save, sender=User)
-'''	
+class UserManager(BaseUserManager):
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        now = timezone.now()
+        if not email:
+            raise ValueError('The given email must be set')
+        user = self.model(username=username, email = UserManager.normalize_email(email),
+                          is_staff=False, is_active=True, is_superuser=False,
+                          last_login=now, **extra_fields)
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        user = self.create_user(username, email, password, **extra_fields)
+        user.is_staff = True
+        user.is_active = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
+
+class User(AbstractBaseUser, PermissionsMixin):
+	#default profile
+	
+	username = models.CharField('username', max_length=30, unique=True, db_index=True,
+		help_text='Required. 30 characters or fewer. Letters, numbers and '
+					'@/./+/-/_ characters',
+		validators=[
+		validators.RegexValidator(re.compile('^[\w.@+-]+$'), 'Enter a valid username.', 'invalid')
+	])
+	first_name = models.CharField('First Name', max_length=30, blank=True)
+	last_name = models.CharField('Last Name', max_length=30, blank=True)
+	gender = models.CharField('Gender',max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
+	contactnumber = models.CharField(max_length=12, blank=True, default="")
+	acct_balance = models.IntegerField(default=MINIMUM_FUNDS_REQUIRED)
+	acct_available = models.IntegerField(default=0)
+	email = models.EmailField('email address', max_length=254, unique=True)
+	date_joined = models.DateTimeField('date joined', default=timezone.now)
+	
+	
+	#user permissions
+	is_staff = models.BooleanField('staff status', default=False,
+		help_text='Designates whether the user can log into this admin site.')
+	is_active = models.BooleanField('active', default=True,
+		help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.')
+	
+	is_consumer = models.BooleanField('is consumer', default=False,
+		help_text='Designates whether the user is a consumer')
+	
+	is_vendor = models.BooleanField('is vendor', default=False,
+		help_text='Designates whether the user is a vendor') 
+	
+	objects = UserManager()
+
+	USERNAME_FIELD = 'username'
+	REQUIRED_FIELDS = ['email']
+
+	def __unicode__(self):
+		return _("%s's profile") % self.username
+
+	def get_absolute_url(self):
+		return reverse('user_profile', args=[self.username])
+
+	def get_full_name(self):
+		full_name = '%s %s' % (self.first_name, self.last_name)
+		return full_name.strip()
+
+	def get_short_name(self):
+		return self.first_name
+
+	def email_user(self, subject, message, from_email=None):
+		"""
+		Sends an email to this User.
+		"""
+		send_mail(subject, message, from_email, [self.email])
+
 class UserProfile(models.Model):
 
 	user = models.OneToOneField(User)
@@ -42,8 +97,10 @@ class UserProfile(models.Model):
 	acct_balance = models.IntegerField(default=MINIMUM_FUNDS_REQUIRED)
 	acct_available = models.IntegerField(default=0)
 	
-	def __str__(self):
-		return "%s's profile" % self.user
+	#tags = TaggableManager(blank=True)
+	
+	def __unicode__(self):
+		return "%s\'s profile" % self.user
 
 def create_user_profile(sender, instance, created, **kwargs):
 	if created:
@@ -53,7 +110,7 @@ post_save.connect(create_user_profile, sender=User)
 
 class NFCDevices(models.Model):
 	
-	user = models.ForeignKey('auth.User', related_name='nfcdevices')
+	user = models.ForeignKey('paySystem.User', related_name='nfcdevices')
 	uid = models.CharField(max_length=13, blank=True)
 	def __unicode__(self):
 		return "UID: "+ unicode(self.uid)
@@ -61,7 +118,7 @@ class NFCDevices(models.Model):
 	
 class Claims(models.Model):
 
-	user = models.ForeignKey('auth.User', related_name='claims')
+	user = models.ForeignKey('paySystem.User', related_name='claims')
 	title = models.CharField(max_length=100, blank=True)
 	type = models.CharField(max_length=8, blank=True)
 	expiry_date = models.DateTimeField('expiry_date')
@@ -77,7 +134,7 @@ class Claims(models.Model):
 
 class Invoices(models.Model):
 	
-	user = models.ForeignKey('auth.User', related_name='invoices')
+	user = models.ForeignKey('paySystem.User', related_name='invoices')
 	amount_payable = models.IntegerField(default=0)
 	issued_date = models.DateTimeField(auto_now_add=True)
 	
@@ -85,29 +142,19 @@ class Invoices(models.Model):
 		ordering = ('issued_date',)
 	
 	def __unicode__(self):
-		return "ID : "+ self.id + "/n Amount Payable : " + self.amount_payable
+		return "[# "+ str(self.id)+ "] - [ "+ self.user.username +" ] "+ "Amount Payable : " + str(self.amount_payable)
 		
-'''		
+
 class Transactions(models.Model):
 	
-	DEBIT = 'DEBT'
-	CREDIT = 'CRED'
-	TACT_TYPE_CHOICES = ((DEBIT, 'Debit'),(CREDIT,'Credit'))
-	tact_datetime = models.DateTimeField('processed date')
-	tact_amount = models.IntegerField(default=0)
-	tact_debit_credit = models.CharField(max_length=4, choices=TACT_TYPE_CHOICES, default=DEBIT)
+	user = models.ForeignKey('paySystem.User', related_name='transactions')
+	invoice = models.ForeignKey('paySystem.Invoices', related_name='transactions')
+	processed_date = models.DateTimeField('processed date')
+	amount = models.IntegerField(default=0)
+	debit_credit = models.CharField(max_length=6)
 	
-class Invoices(models.Model):
-	
-	invc_amount = models.IntegerField(default=0)
-	invc_date = models.DateTimeField(auto_now_add=True)
+	class Meta:
+		ordering = ('processed_date',)
 
-class Vendors(models.Model):
-	
-	vend_name = models.CharField(max_length=100)
-	vend_contactno = models.CharField(max_length=100)
-	vend_email = models.CharField(max_length=100)
-	vend_acctbal = models.IntegerField(default=0)
-'''	
 
 	

@@ -5,13 +5,9 @@ body {
 	font-family: "Lucida Sans Unicode";
 	line-height: 1.5;
 	text-align: left;
-	
-}
-
-a {
-
-	text-decoloration: none;
-
+	margin: 0 auto;
+	width: 75%;
+	clear: both;
 }
 
 a:link, a:visited {
@@ -26,15 +22,29 @@ a:hover, a:active {
 
 }
 
-.body {
+.logo {
 
-	margin: 0 auto;
-	width: 75%;
-	clear: both;
+	padding:5px;
 
 }
 
-.mainHead nav {
+.login {
+
+	text-align:right;
+	padding:10px;
+	float:right;	
+
+}
+.login a:link, 
+.login a:visited {
+	
+	color:#04bae3;
+	display: inline-block;
+	height: 20px;
+
+}
+
+.nav {
 
 	background-color: #797979;
 	height: 40px;
@@ -43,21 +53,21 @@ a:hover, a:active {
 	-mor-border-radius: 7px;
 }
 
-.mainHead nav ul {
+.nav ul {
 
 	list-style:none;
 	margin: 0 auto;
 
 }
 
-.mainHead nav ul li {
+.nav ul li {
 
 	float:left;
 	display:inline;
 
 }
 
-.mainHead nav a:link, .mainHead nav a:visited {
+.nav a:link, a:visited {
 
 	color: #fff;
 	display: inline-block;
@@ -66,18 +76,34 @@ a:hover, a:active {
 
 }
 
-.mainHead nav .active a:link,
-.mainHead nav .active a:visited,
-.mainHead nav a:hover,
-.mainHead nav a:active {
+.nav ul li .active a:link,
+.nav ul li .active a:visited,
+.nav ul li a:hover,
+.nav ul li a:active {
 
 	background-color: #04bae3;
 	text-shadow:none;
 
 }
 
-.loginBox div {
+.content_title {
+	
+	padding: 10px 25px;
+	font-size:150%;
 
-	align:right;
+}
 
+.content {
+
+	padding: 10px 25px;
+}
+
+.errorlist {
+
+	list-style:none;
+	background-color:#DD1144;
+	padding:5px;
+	border-radius: 7px;
+	-webkit-border-radius: 7px;
+	-mor-border-radius: 7px;
 }
