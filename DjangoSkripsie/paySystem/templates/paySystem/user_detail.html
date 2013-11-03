@@ -1,0 +1,39 @@
+{% extends 'paySystem/base.html' %}
+
+{% block title %}{{ user_profile.get_full_name }}{% endblock %}
+ 
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		<li><a href="edit">Edit</a></li>
+		</ul>
+{% endblock %}     
+
+{% block content_title %}
+{{ user_profile.get_full_name }}
+{% endblock %}	
+
+{% block content %}
+	{% if messages %}
+		<ul>
+		{% for message in messages %}
+		<li>{{ message }}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+	
+		<h3>Personal</h3>
+			<ul>
+			<li>Email:{{ user_profile.email }}</li>
+			<li>Contact No.:{{ user_profile.contactnumber }}</li>
+			<li>Days since joined:{% if user_profile.days_since_joined == null %} Today {% endif %}</li>
+			
+			</ul>
+		<h3>Account</h3>
+			<ul>
+			<li>Balance:{{ user_profile.acct_balance }}</li>
+			<li>Available:{{ user_profile.acct_available }}</li>
+			</ul>
+
+{% endblock %}

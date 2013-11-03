@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+
+{% block title %}User List{% endblock %}
+ 
+ {% block content_title %}User List{% endblock %}	
+ 
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		<li><a href="edit">Edit</a></li>
+		</ul>
+{% endblock %}        
+{% block content %}
+
+				
+
+<ul>{% for user in users %}<li><a href="{{ user.username }}">{{ user }}</a></li>
+						{% endfor %}
+						</ul>
+					
+					{% endblock content %}
+           
+ 
+
+
+
+      
+
+
+    
+
+
+
+   
+
+

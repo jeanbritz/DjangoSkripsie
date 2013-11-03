@@ -1,0 +1,46 @@
+{% extends "paySystem/base.html" %}
+
+
+{% block title %}Invoice Detail{% endblock %}
+
+{% block content_title %}
+Invoice Detail
+{% endblock %}
+
+{% block nav %}
+		<ul>
+			<li><a href="/">Back</a></li>
+			<li><a href="/{{ user.username }}/invoices/add">Add</a></li>
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    {% if invoice %}
+    <h3>Invoice ID {{ invoice.id }}</h3>
+	<p>
+         <br>
+		Amount Payable: {{ invoice.amount_payable }} <br>
+		Issued Date: {{ invoice.issued_date }} 
+    </p>
+	<h4> Transactions </h4>
+	{% if invoice.transactions.all %}
+		{% for transact in invoice.transactions.all %}
+		<ul>
+			<li>ID : {{ transact.id }} </li> 
+			<li>User : {{transact.user.full_name }} [ {{ transact.user.username }} ]</li> 
+			<li>Processed Date : {{ transact.processed_date }} </li> 
+			<li>Amount : {{ transact.amount }} </li> 
+			<li>Debit or Credit : {{ transact.debit_credit }} </li>
+		</ul>
+		{% endfor %}
+	{% else %}
+		<p> No transactions yet </p>
+	{% endif %}
+{% else %}
+    <p>No invoice is available.</p>
+{% endif %}
+
+{% endblock %}
+

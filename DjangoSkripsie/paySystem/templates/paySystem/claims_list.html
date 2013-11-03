@@ -1,0 +1,41 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Claims List{% endblock %}
+
+{% block content_title %}
+Claims List
+{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		{% if user.is_superuser %}
+			<li><a href="claims/add">Add</a></li>
+		{% endif %}
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    {% if claims_list %}
+    
+		{% for claim in claims_list %}
+        <ul>
+			<li>ID: {{ claim.id }}</li>
+			<li>Title: {{ claim.title }}</li>
+			<li>Type: {{ claim.type }}</li>
+			<li>Expiry Date: {{ claim.expiry_date }}</li>
+			<li>Claimed : {{ claim.claimed }} </li>
+			<li>Amount : {{ claim.amount }} </li>
+		</ul>
+		{% endfor %}
+   
+	{% else %}
+		<p>No claims are available.</p>
+	{% endif %}
+
+{% endblock %}
+

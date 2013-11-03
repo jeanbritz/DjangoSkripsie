@@ -3,15 +3,18 @@ Provides various authentication policies.
 """
 from __future__ import unicode_literals
 import base64
+import datetime
 
 from django.contrib.auth import authenticate
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.timezone import utc
 from rest_framework import exceptions, HTTP_HEADER_ENCODING
 from rest_framework.compat import CsrfViewMiddleware
 from rest_framework.compat import oauth, oauth_provider, oauth_provider_store
 from rest_framework.compat import oauth2_provider, provider_now
 from rest_framework.authtoken.models import Token
-
+#from rest_framework.authentication import TokenAuthentication
+from rest_framework import exceptions
 
 def get_authorization_header(request):
     """
@@ -177,8 +180,24 @@ class TokenAuthentication(BaseAuthentication):
 
     def authenticate_header(self, request):
         return 'Token'
+'''
+class ExpiringTokenAuthentication(TokenAuthentication):
+    def authenticate_credentials(self, key):
+        try:
+            token = self.model.objects.get(key=key)
+        except self.model.DoesNotExist:
+            raise exceptions.AuthenticationFailed('Invalid token')
 
+        if not token.user.is_active:
+            raise exceptions.AuthenticationFailed('User inactive or deleted')
 
+        utc_now = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        if token.created < utc_now - datetime.timedelta(hours=24):
+            raise exceptions.AuthenticationFailed('Token has expired')
+
+        return (token.user, token)
+'''		
 class OAuthAuthentication(BaseAuthentication):
     """
     OAuth 1.0a authentication backend using `django-oauth-plus` and `oauth2`.

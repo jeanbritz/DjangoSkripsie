@@ -1,29 +1,41 @@
 {% extends "paySystem/base.html" %}
 
-{% block title %}Home - NFCPaySystem{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block home %}active{% endblock %}
 
 {% block nav %}
-	{% if user.is_consumer %}
 			<ul>
-				<li><a href="{{ user.username }}/invoices">Invoices</a></li>
 			{% if user.is_superuser %}
+			
+				
 				<li style="float:right"><a href="/admin">Admin</a></li>
-			{% endif %}
-			{% if user.is_active %}
-				<li style="float:right"><a href="{{ user.username }}">Profile</a></li>
+				
 			{% endif %}
 			
+			{% if user.is_authenticated %}
+				<li><a href="{{ user.username }}/invoices">Invoices</a></li>
+				<li><a href="{{ user.username }}/claims">Claims</a></li>
+				<li><a href="{{ user.username }}/transactions">Transactions</a></li>
+				<li style="float:right"><a href="/location/{{ user.location_id }}">Location</a></li>
+				<li style="float:right"><a href="{{ user.username }}">Profile</a></li>
+			{% endif %}
 			</ul>
-	{% endif %}
+	
 {% endblock %}
 
 {% block content_title %}
-Welcome
+<h3>Welcome</h3>
+
+<p>Here is a link to a video of how this project operates: <a href="http://goo.gl/qoGFFw">http://goo.gl/qoGFFw</a>
+</p>
 {% endblock %}
 
 {% block content %}
+<ul>
+<li><a href="/o/applications/">OAuth2 applications</a></li>
+<li><a href="/consumer/">Consumer Test</a></li>
+</ul>
 {% endblock %}
 
 

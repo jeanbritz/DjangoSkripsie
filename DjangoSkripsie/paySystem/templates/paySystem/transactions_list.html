@@ -1,0 +1,41 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Transaction List{% endblock %}
+
+{% block content_title %}
+Transaction List
+{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		{% if user.is_superuser or perms.paySystem.add_transactions %}
+			<li><a href="add">Add</a></li>
+		{% endif %}
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    
+	{% if transactions_list %}
+    
+		{% for transact in transactions_list %}
+		<ul>
+			<li>Transact ID : {{transact.id}} </li>
+			<li>Invoice ID : {{ transact.invoice_id }}</li>
+			<li>Processed Date : {{ transact.processed_date }}</li>
+			<li>Amount : {{ transact.amount }} </li>
+			<li>Debit or Credit : {{ transact.debit_credit }} </li>
+		</ul>
+		{% endfor %}
+    
+	{% else %}
+		<p>No transactions are available.</p>
+	{% endif %}
+
+{% endblock %}
+

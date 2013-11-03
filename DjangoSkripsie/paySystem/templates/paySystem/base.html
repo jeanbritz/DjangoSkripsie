@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"  "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="paySystem - Open-Source NFC Payment System">
+    <meta name="author" content="Jean Britz">
+	
+	{% load staticfiles %}
+	<link rel='icon' type='image/x-icon' href="{% static 'favicon.ico' %}">
+	<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" />
+	<link rel="stylesheet" type="text/css" href="{% static 'paySystem/style.css' %}" />
+	
+	
+	<title>{% block title %}{% endblock %} | NFCPaySystem</title>
+</head>
+
+<body>
+	<div class="header">
+		{% block header %}
+		<table width="100%">
+		<tbody>
+		<tr>
+			<td><div class="logo"><a href="/"><img src="{% static 'paySystem/images/header.png' %}"/></a>
+			</div></td>
+			
+			<td><div class="login">
+				{% if user.is_authenticated %}
+					Welcome, {{ user.first_name }} {{user.last_name}} | {{user.username}} | <a href="/accounts/signout">log out</a>
+				{% else %}
+					Welcome, Guest. Please <a href="/accounts/signin">login</a> or <a href="/accounts/register">register</a><br>
+					<a href="/google/login"><img src="{% static 'paySystem/images/sign-in-with-google.png' %}"/></a>
+				{% endif %}
+				{% for group in user.groups.all %}
+					{% if group.name == "Consumer" %}
+						<h4>Consumer</h4>
+					{% endif %}
+					{% if group.name == "Vendor" %}
+						<h4>Vendor</h4>
+					{% endif %}
+				{% endfor %}
+				
+				{% if user.is_superuser %}<h4>Super User</h4>{% endif %}
+				
+			</div></td>
+		</tr>
+		</tbody>
+		</table>
+		<div class="nav">
+			{% block nav %}{% endblock %}
+		</div> <!-- end nav -->
+	{% endblock %}
+	</div>
+	
+	<h3 class="block-center-heading">
+	{% block content_title %}
+	{% endblock %}
+	</h3>
+	
+	<!-- end content_title -->
+	<div class="block-center">
+	{% block content %}
+	{% endblock %}
+	</div>
+	<!-- end content -->
+</body>
+</html>
+

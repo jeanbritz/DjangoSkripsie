@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset="utf-8">
+	<title> NFC Pay System </title>
+	{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'paySystem/style.css' %}" />
+	<script src="{% static 'paySystem/js/paySystem.js' %}"></script>
+	<script src="{% static 'paySystem/js/angular.min.js' %}"></script>
+	<meta name="viewport content = "width-device-width, initial-scale=1.0">
+</head>
+
+
+<body ng-app="paySystem">
+	
+	<header class="mainHead">
+	<div align="right" class="loginBox">
+		{% if user.is_authenticated %}
+		Welcome, {{ user.first_name }} {{user.last_name}} | <a href="http://ml.sun.ac.za:8000/accounts/logout">log out</a>
+		{% else %}
+		
+		<!--<div style="float:right">Welcome, Guest. Please login or <a href="account/signup">register</a></div>-->
+		<a href="google/login"><img src="{% static 'paySystem/images/sign-in-with-google.png' %}"/></a>
+		
+		{% endif %}
+		</div>
+		<div style="display:block"><img src="{% static 'paySystem/images/header.png' %}"/></div> 
+		<nav><ul>
+		<li class ="active"><a href="#">Home</a></li>
+		<li><a href="#">Features</a></li>
+		<li><a href="#">Coverage</a></li>
+		
+		<li><a href="http://ml.sun.ac.za:8000/about">About us</a></li>
+		<li style="float:right"><a href="http://ml.sun.ac.za:8000/accounts/login">Login</a></li>
+		<!--<li style="float:right" ><a href="#">Contact Us</a></li>-->
+		</ul>
+		</nav>
+	</header>
+	
+
+</body>
+</html>

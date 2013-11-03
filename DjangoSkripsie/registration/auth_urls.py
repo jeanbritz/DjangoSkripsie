@@ -31,11 +31,11 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = patterns('',
-                       url(r'^login/$',
+                       url(r'^signin/$',
                            auth_views.login,
                            {'template_name': 'registration/login.html'},
                            name='auth_login'),
-                       url(r'^logout/$',
+                       url(r'^signout/$',
                            auth_views.logout,
                            {'template_name': 'registration/logout.html'},
                            name='auth_logout'),

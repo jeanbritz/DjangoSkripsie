@@ -1,0 +1,40 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Invoice List{% endblock %}
+
+{% block content_title %}
+Invoice List
+{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		{% if user.is_superuser %}
+			<li><a href="invoices/add">Add</a></li>
+		{% else %}
+			{% for group in user.groups.all %}
+				{% if group.name == "Vendor" %}
+					<li><a href="invoices/add">Add</a></li>
+				{% endif %}
+			{% endfor %}
+		{% endif %}
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    {% if invoices_list %}
+    <ul>
+    {% for invoice in invoices_list %}
+        <li>[ID #{{invoice.id}}] [{{ invoice.issued_date }}] - Amount payable: {{ invoice.amount_payable }} <a href="/invoices/{{ invoice.id }}">Edit</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No invoices are available.</p>
+{% endif %}
+
+{% endblock %}
+

@@ -26,5 +26,6 @@ admin.site.register(User)
 admin.site.register(Claims)
 admin.site.register(Invoices)
 admin.site.register(Transactions)
-
+admin.site.register(Locations)
+admin.site.register(NFCDevices)
 #admin.site.register(Consumer, ConsumerAdmin)

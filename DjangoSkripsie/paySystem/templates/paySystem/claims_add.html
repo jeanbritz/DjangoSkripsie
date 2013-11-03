@@ -1,0 +1,25 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Add Claim{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		<li class="active"><a href="../claims">List All</a></li>
+		</ul>
+{% endblock %}
+
+{% block content_title %}
+Add Claim
+{% endblock %}
+
+{% block content %}
+    
+	{% if user.is_superuser %}
+		{% crispy form %}
+    {% endif %}
+	
+{% endblock %}
+

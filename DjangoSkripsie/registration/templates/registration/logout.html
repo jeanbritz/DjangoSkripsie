@@ -1,0 +1,17 @@
+{% extends "registration/base_registration.html" %}
+
+
+{% block title %}Logged out{% endblock %}
+{% block body_class %}{{ block.super }} logout{% endblock %}
+
+
+{% block content_title %}
+  <h2>Logged out</h2>
+  
+{% endblock %}
+
+
+{% block content %}
+	
+  <p><a href = "/accounts/signin">Log in</a> with different user</p> 
+{% endblock %}

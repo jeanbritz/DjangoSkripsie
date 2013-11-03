@@ -9,7 +9,7 @@ you're using a custom model.
 """
 
 
-from django.contrib.auth.models import User
+from paySystem.models import User
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
@@ -28,7 +28,8 @@ class RegistrationForm(forms.Form):
 
     """
     required_css_class = 'required'
-    
+    first_name = forms.CharField(label=_("First Name"))
+    last_name = forms.CharField(label=_("Last Name"))
     username = forms.RegexField(regex=r'^[\w.@+-]+$',
                                 max_length=30,
                                 label=_("Username"),

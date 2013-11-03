@@ -1,0 +1,27 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Invoice List{% endblock %}
+
+{% block content_title %}Invoice List{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    {% if user.is_superuser %}
+		{% crispy form %}
+    {% else %}
+
+         <p>You May have reached this page in error or you don't have access to this page</p>
+
+    {% endif %}
+
+{% endblock %}
+

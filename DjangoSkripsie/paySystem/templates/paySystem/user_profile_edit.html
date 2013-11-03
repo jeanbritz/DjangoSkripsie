@@ -1,0 +1,47 @@
+{% extends 'paySystem/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content_title %}Edit Profile{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/{{ user.username }}">Back</a></li>
+		</ul>
+{% endblock %}
+
+{% if messages %}
+	<ul>
+	{% for message in messages %}
+		<li>{{ message }}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+
+
+{% block content %}
+    {% if user.is_authenticated %}
+		<form action="{{ action }}" method="POST">
+		{% csrf_token %}
+
+		{% for field in form %}
+		<div id="{{ field.auto_id }}_container">
+			{{ field.help_text }}
+			<div>
+				{{ field.label_tag }} {{ field }}
+			</div>
+			<div id="{{ field.auto_id }}_errors">
+			{{ field.errors }}
+			</div>
+		</div>
+		{% endfor %}
+
+  <input id="save_contact" type="submit" value="Save" />
+</form>
+    {% else %}
+
+         <p>You May have reached this page in error or you don't have access to this page</p>
+
+    {% endif %}
+
+{% endblock %}

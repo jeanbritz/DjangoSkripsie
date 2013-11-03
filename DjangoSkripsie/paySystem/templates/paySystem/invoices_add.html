@@ -1,0 +1,25 @@
+{% extends "paySystem/base.html" %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+{% block title %}Add Invoice{% endblock %}
+
+{% block content_title %}
+Add Invoice
+{% endblock %}
+
+{% block nav %}
+		<ul>
+		<li><a href="/">Back</a></li>
+		<li class="active"><a href="../invoices">List All</a></li>
+		</ul>
+{% endblock %}
+
+{% block content %}
+    
+	{% if user.is_superuser or perms.paySystem.add_invoices %}
+		{% crispy form %}
+    {% endif %}
+	
+{% endblock %}
+

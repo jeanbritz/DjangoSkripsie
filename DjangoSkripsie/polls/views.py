@@ -48,3 +48,16 @@ def vote(request, poll_id):
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
 		return HttpResponseRedirect(reverse('polls:results', args=(poll.id,)))
+		
+def ArduinoAddInvoice(request):
+	if request.method == "POST":
+		form = ArduinoAddForm(request.DATA)
+		if form.is_valid():
+			new_Invoice = form.save()
+			new_Invoice.save()
+			return render_to_response('paySystem/arduino_invoice_success.html', { 'form' : form })
+		else:
+			
+	if request.method == "GET":
+				
+		return HttpResponse('Arduino Usage')

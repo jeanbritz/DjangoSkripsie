@@ -1,0 +1,25 @@
+{% extends "registration/base_registration.html" %}
+
+
+{% block title %}Log in{% endblock %}
+{% block body_class %}{{ block.super }} login_form{% endblock %}
+
+
+{% block content_title %}
+  <h2>Log in</h2>
+{% endblock %}
+
+
+{% block content %}
+	{% if not user.is_authenticated %}
+    <form action="." method="post" class="login_form">{% csrf_token %}
+    
+		{{ form.as_p }}
+		<p class="submit"><button type="submit" name="submit" value="Login">Log in</button></p>
+		{% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+    </form>
+	{% else %}
+	<h3> You are already logged in! </h3>
+	<a href="/accounts/logout"><h4> Log out rather? </h4></a>
+    {% endif %}
+{% endblock %}

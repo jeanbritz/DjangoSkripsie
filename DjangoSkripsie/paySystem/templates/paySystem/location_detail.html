@@ -1,0 +1,37 @@
+{% extends "paySystem/base.html" %}
+
+
+{% block title %}Location Detail{% endblock %}
+
+{% block content_title %}
+Location Detail
+{% endblock %}
+
+{% block nav %}
+		<ul>
+			<li><a href="/">Back</a></li>
+			<li><a href="/location/add">Add</a></li>
+		</ul>
+{% endblock %}
+
+
+
+{% block content %}
+    {% if location %}
+    <h4>{{ location.caption }}</h4>
+	<ul>
+    
+        <li>MCC: {{ location.mcc }} </li>
+		<li>MNC: {{ location.mnc }}</li>
+		<li>Network: {{ location.network }}</li>
+		<li>LAC: {{ location.lac }}</li>
+		<li>Cell ID: {{ location.cell_id }}</li>
+		
+    </ul>
+	<a href="http://www.opencellid.org/cell/get?key=042765f1a17822afe79b92df9f2e97ad&mnc={{location.mnc}}&mcc={{location.mcc}}&lac={{location.lac}}&cellid={{location.cell_id}}">Get coordinates </a>
+{% else %}
+    <p>No location is available.</p>
+{% endif %}
+
+{% endblock %}
+

@@ -44,7 +44,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 
 FIXTURE_DIRS = (
-   os.path.join(os.path.dirname(__file__), 'account/fixtures'),
+   os.path.join(os.path.dirname(__file__), 'accounts/fixtures'),
 )
 
 STATIC_URL = '/static/'
@@ -56,7 +56,7 @@ STATICFILES_DIRS = (
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = True
+USE_I18N = False
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -84,8 +84,12 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-	'django.core.context_processors.request',
-	'django.contrib.messages.context_processors.messages',
+	
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
 	'django.contrib.auth.context_processors.auth',
 	
 )
@@ -96,6 +100,8 @@ MIDDLEWARE_CLASSES = (
 	'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 	'debug_toolbar.middleware.DebugToolbarMiddleware',
+	'oauth2_provider.middleware.OAuth2TokenMiddleware',
+	
 )
 
 ROOT_URLCONF = 'skripsie.urls'
@@ -115,93 +121,85 @@ INSTALLED_APPS = (
     'registration',
 	'paySystem',
 	'rest_framework',
+	'rest_framework_swagger',
 	'crispy_forms',
 	'django_openid_auth',
-	'debug_toolbar',
-	'inspector_panel',
+	#'inspector_panel',
 	'south',
+	'oauth2_provider',
+	'oauthlib',
+	'braces',
+	
+	
 )
 
+SWAGGER_SETTINGS = {
+    "exclude_namespaces": [], # List URL namespaces to ignore
+    "api_version": '1.0',  # Specify your API's version
+    "api_path": "/",  # Specify the path to your API not a root level
+    "enabled_methods": [  # Specify which methods to enable in Swagger UI
+        'get',
+        'post',
+        'put',
+        'patch',
+        'delete'
+    ],
+    "api_key": '123', # An API key
+    "is_authenticated": False,  # Set to True to enforce user authentication,
+    "is_superuser": False,  # Set to True to enforce admin only access
+}
+
 DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.template.TemplateDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-	'inspector_panel.panels.inspector.InspectorPanel',
+    #'debug_toolbar.panels.version.VersionDebugPanel',
+    #'debug_toolbar.panels.timer.TimerDebugPanel',
+    #'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    #'debug_toolbar.panels.headers.HeaderDebugPanel',
+    #'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    #'debug_toolbar.panels.template.TemplateDebugPanel',
+    #'debug_toolbar.panels.sql.SQLDebugPanel',
+    #'debug_toolbar.panels.signals.SignalDebugPanel',
+    #'debug_toolbar.panels.logger.LoggingPanel',
+	#'inspector_panel.panels.inspector.InspectorPanel',
 )
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'auth.GoogleBackend',
+	'oauth2_provider.backends.OAuth2Backend',
 	
 )
 
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/'
-LOGOUT_URL = '/logout/'
+LOGIN_URL = '/accounts/signin/'
+LOGOUT_URL = '/accounts/signout/'
 OPENID_SSO_SERVER_URL = 'https://www.google.com/accounts/o8/id'
 
-REST_FRAMEWORK = {
-
-	# Use hyperlinked styles by default.
-    # Only used if the `serializer_class` attribute is not set on a view.
-    'DEFAULT_MODEL_SERIALIZER_CLASS': (
-        'rest_framework.serializers.HyperlinkedModelSerializer'),
-
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    #'DEFAULT_PERMISSION_CLASSES': [
-    #    'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-	#],
-	'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    )
+OAUTH2_PROVIDER = {
+    'CLIENT_ID_GENERATOR_CLASS':
+        'oauth2_provider.generators.ClientIdGenerator',
+    'CLIENT_SECRET_GENERATOR_CLASS':
+        'oauth2_provider.generators.ClientSecretGenerator',
+		# this is the list of available scopes
+    #'SCOPES': {'read' , 'write', 'groups'}
 }
+
+
+REST_FRAMEWORK = {
+	
+	'DEFAULT_AUTHENTICATION_CLASSES' : (
+		'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+		#'oauth2_provider.ext.rest_framework.OAuth2Authentication',
+	),
+	'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+	
+}
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap'
 
+REGISTRATION_DEFAULT_GROUP_NAME='Consumer'
 ACCOUNT_ACTIVATION_DAYS = 7
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
-        },
-    },
-    'handlers': {
-        'null': {
-            'level':'DEBUG',
-            'class':'django.utils.log.NullHandler',
-        },
-        'console':{
-            'level':'DEBUG',
-            'class':'logging.StreamHandler',
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers':['null'],
-            'propagate': True,
-            'level':'INFO',
-        },
-        'django.request': {
-            'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'django.db.backends': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    }
-}
